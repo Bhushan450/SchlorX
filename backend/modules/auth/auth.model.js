@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         minlength:6, // we dont write a maxlength for password -> after hashing lengh coulb become 50+ size
         required:[true,"password is required"],
+        select:false,
     },
     role:{
         type:String,
