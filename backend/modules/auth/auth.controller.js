@@ -1,0 +1,75 @@
+import * as authService from "./auth.service.js"
+import ApiResponse from "../../common/utils/Api-response.js";
+
+const register = async (req,res)=>{
+    // register a user
+    const user = await authService.register(req.body);
+    ApiResponse.created(res,"Registration successfull", user)
+}
+
+const login = async (req, res) => {
+    const data = await authService.login(req.body);
+
+    res.cookie("refreshToken",data.refreshToken , {
+        httpOnly : true,
+        secure:true,
+        maxAge : 7*24 * 60 * 60 * 1000,
+    })
+    res.cookie("accessToken",data.accessToken , {
+        httpOnly : true,
+        secure:true,
+        maxAge : 15*60*1000,
+    });
+
+    ApiResponse.ok(res, "Login successful", data);
+};
+
+const logout = async (req,res)=>{
+
+    res.clearCookie("refreshToken");
+    res.clearCookie("accessToken");
+
+    ApiResponse.ok(res,"Logout Success");
+
+};
+
+const refresh = async(req,res)=>{
+    const accessAndrefreshTokens = await authService.refresh(req.params.token);
+
+    ApiResponse.ok(res,"tokens refreshed",accessAndrefreshTokens)
+};
+
+const getProfile = async (req,res)=>{
+    const user = await authService.getProfile(req.user.id);
+
+    ApiResponse.ok(res,"getProfile succesFull", user)
+};
+
+const verifyEmail = async (req,res)=>{
+    const user = await authService.verifyEmail(req.params.token);
+
+    ApiResponse.ok(res,"email verification successfull" , user)
+};
+
+const forgotPassword = async (req,res)=>{
+    const token = await authService.forgotPassword(req.body)
+
+    ApiResponse.ok(res, "email for forgot password sent succesfully!",token )
+};
+
+const resetPassword = async (req,req)=>{
+    const user = await authService.resetPassword(req,req.params.token);
+     
+    ApiResponse.ok(res,"Passowrd is reset", user )
+};
+
+export {
+    register, 
+    login, 
+    logout, 
+    refresh,
+    getProfile, 
+    verifyEmail, 
+    forgotPassword, 
+    resetPassword,
+};
