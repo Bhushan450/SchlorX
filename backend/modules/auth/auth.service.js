@@ -16,6 +16,7 @@ import{
 
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
+import { raw } from "express";
 
 // hashes the tokens
 const hashToken = (token)=>{
@@ -51,7 +52,7 @@ const register = async (req, res)=>{
 
     // send email to verify
         try {
-            await sendVerificationEmail(email , token)
+            await sendVerificationEmail(email , rawToken)
         } catch (error) {
             console.log(error);     
         }
@@ -99,7 +100,7 @@ const login = async (req,res)=>{
 // refreshTokens (accessTokens and refreshTokens)
 const refresh = async (token)=>{
 
-    if(!token) throw ApiError.unauthorized("RefreshToken missing");
+    if(!token) throw ApiError.unauthorised("RefreshToken missing");
     const decoded = verifyRefreshToken(token);
 
     const user = await User.findById(decoded._id).select("+refreshToken")
@@ -139,7 +140,7 @@ const forgotPassword = async (req,res)=>{
     // send email with rawtokens to verify email
     //TODO : mail bhejna nhi aata 
     try {
-        await sendResetPasswordEmail(email , token)
+        await sendResetPasswordEmail(email , rawToken)
     } catch (error) {
         console.log(error);     
     }
@@ -163,7 +164,7 @@ const resetPassword = async (req,token)=>{
     }).select("+resetPasswordToken +resetPasswordExpires");
     if(!user)
     {
-        throw ApiError.unauthorized("Invalid or expired reset token")
+        throw ApiError.unauthorised("Invalid or expired reset token")
     }
 
     user.password = password;
@@ -181,7 +182,7 @@ const verifyEmail = async (token)=>{
     const hashedToken = hashToken(token);
     
         const user = await User.findOne({verificationToken: hashedToken}).select("+verificationToken");
-        if(!user) throw ApiError.notfound("User not found");
+        if(!user) throw ApiError.notFound("User not found");
     
         user.isVerified = true;
         user.verificationToken = undefined;
@@ -194,7 +195,7 @@ const verifyEmail = async (token)=>{
 const getProfile = async (userId)=>{
 
     const user = await User.findById(userId);
-    if(!user) throw ApiError.notfound("User not found");
+    if(!user) throw ApiError.notFound("User not found");
 
     return user; 
 };
