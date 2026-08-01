@@ -1,5 +1,5 @@
 import * as authService from "./auth.service.js"
-import ApiResponse from "../../common/utils/Api-response.js";
+import ApiResponse from "../../common/utils/ApiResponse.js";
 
 const register = async (req,res)=>{
     // register a user
@@ -57,7 +57,7 @@ const forgotPassword = async (req,res)=>{
     ApiResponse.ok(res, "email for forgot password sent succesfully!",token )
 };
 
-const resetPassword = async (req,req)=>{
+const resetPassword = async (req,res)=>{
     const user = await authService.resetPassword(req,req.params.token);
      
     ApiResponse.ok(res,"Passowrd is reset", user )
