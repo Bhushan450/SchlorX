@@ -39,7 +39,7 @@ const sendMail = async (to , subject , html)=>{
 
 const sendVerificationEmail = async (email,token)=>{
 
-    const url = `${process.env.CLIENT_URL}/verify-email.${token}`
+    const url = `${process.env.CLIENT_URL}/verify-email/${token}`
     await sendMail(
         email,
         "verify your email",
@@ -49,7 +49,7 @@ const sendVerificationEmail = async (email,token)=>{
 
 const sendOrderConfirmationEmail = async (email , order)=>{
     const items = order.items
-    .map((i)=> `<li>${i.title} x {i.quantity} - ${i.price}</li>`)
+    .map((i)=> `<li>${i.title} x ${i.quantity} - ${i.price}</li>`)
     .join("");
 
     await sendMail(
