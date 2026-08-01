@@ -1,9 +1,8 @@
-import crypto from "crypto" // jsonwebToken
-import { raw } from "express";
-import jwt from "jsonwebtoken"
+import crypto from "crypto" 
+import jwt from "jsonwebtoken" // jsonWebToken
 
 // genearte Access Token
-const generateAccessToken = (payload)=>{
+const generateAccessToken = (id,role)=>{
    
    return jwt.sign(payload , process.env.JWT_ACCESS_SECRET , {
       expiresIn: process.env.JWT_ACCESS_EXPIRES || '15m'
@@ -16,8 +15,8 @@ const verifyAccessToken = (token)=>{
 };
 
 //generate Refresh Token
-const generateRefreshToken = (payload)=>{
-   jwt.sign(payload, process.env.JWT_REFRESH_SECRET , {
+const generateRefreshToken = (id,role)=>{
+   return jwt.sign(payload, process.env.JWT_REFRESH_SECRET , {
       expiresIn: process.env.JWT_REFRESH_EXPIRES||'7d'
    });
 };
