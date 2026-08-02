@@ -32,7 +32,7 @@ const refresh = async(req,res)=>{
 
     setAuthCookies(res, accessToken, refreshToken);
 
-    ApiResponse.ok(res,"tokens refreshed",accessAndrefreshTokens)
+    ApiResponse.ok(res,"tokens refreshed")
 };
 
 const getProfile = async (req,res)=>{
