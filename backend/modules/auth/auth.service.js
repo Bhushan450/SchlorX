@@ -16,7 +16,6 @@ import{
 
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import { raw } from "express";
 
 // hashes the tokens
 const hashToken = (token)=>{
@@ -26,7 +25,7 @@ const hashToken = (token)=>{
        .digest("hex")
 }
 
-// register the user (sign-up) -> admin registration
+// register the user (sign-up) 
 const register = async (req, res)=>{
 
     const {name,email,password,role,phone,} = req.body;
