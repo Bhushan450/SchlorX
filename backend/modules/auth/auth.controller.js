@@ -34,7 +34,7 @@ const logout = async (req,res)=>{
 };
 
 const refresh = async(req,res)=>{
-    const accessAndrefreshTokens = await authService.refresh(req.params.token);
+    const accessAndrefreshTokens = await authService.refresh(req.cookie.refreshToken);
 
     ApiResponse.ok(res,"tokens refreshed",accessAndrefreshTokens)
 };
