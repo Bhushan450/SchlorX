@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken" // jsonWebToken
 // genearte Access Token
 const generateAccessToken = (id,role)=>{
    
-   return jwt.sign(payload , process.env.JWT_ACCESS_SECRET , {
+   return jwt.sign({ _id: id, role } , process.env.JWT_ACCESS_SECRET , {
       expiresIn: process.env.JWT_ACCESS_EXPIRES || '15m'
    });
 };
@@ -16,7 +16,7 @@ const verifyAccessToken = (token)=>{
 
 //generate Refresh Token
 const generateRefreshToken = (id,role)=>{
-   return jwt.sign(payload, process.env.JWT_REFRESH_SECRET , {
+   return jwt.sign({ _id: id, role }, process.env.JWT_REFRESH_SECRET , {
       expiresIn: process.env.JWT_REFRESH_EXPIRES||'7d'
    });
 };
