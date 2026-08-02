@@ -13,11 +13,13 @@ const login = async (req, res) => {
     res.cookie("refreshToken",data.refreshToken , {
         httpOnly : true,
         secure:true,
+        sameSite:"strict",
         maxAge : 7*24 * 60 * 60 * 1000,
     })
     res.cookie("accessToken",data.accessToken , {
         httpOnly : true,
         secure:true,
+        sameSite:"strict", //
         maxAge : 15*60*1000,
     });
 
@@ -26,6 +28,7 @@ const login = async (req, res) => {
 
 const logout = async (req,res)=>{
 
+    const logoutRes = await authService.logout(req.user.id)
     res.clearCookie("refreshToken");
     res.clearCookie("accessToken");
 
@@ -34,7 +37,7 @@ const logout = async (req,res)=>{
 };
 
 const refresh = async(req,res)=>{
-    const accessAndrefreshTokens = await authService.refresh(req.cookie.refreshToken);
+    const accessAndrefreshTokens = await authService.refresh(req.cookies.refreshToken);
 
     ApiResponse.ok(res,"tokens refreshed",accessAndrefreshTokens)
 };
@@ -58,7 +61,7 @@ const forgotPassword = async (req,res)=>{
 };
 
 const resetPassword = async (req,res)=>{
-    const user = await authService.resetPassword(req,req.params.token);
+    const user = await authService.resetPassword(req.body,req.params.token);
      
     ApiResponse.ok(res,"Passowrd is reset", user )
 };
