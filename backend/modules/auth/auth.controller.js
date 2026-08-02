@@ -30,7 +30,7 @@ const refresh = async(req,res)=>{
 
     const {accessToken,refreshToken} = await authService.refresh(req.cookies.refreshToken);
 
-    setAuthCookies(res, data.accessToken, data.refreshToken);
+    setAuthCookies(res, accessToken, refreshToken);
 
     ApiResponse.ok(res,"tokens refreshed",accessAndrefreshTokens)
 };
