@@ -26,14 +26,14 @@ const hashToken = (token)=>{
 }
 
 // register the user (sign-up) 
-const register = async (req, res)=>{
+const register = async (data, res)=>{
 
-    const {name,email,password,role,phone,} = req.body;
+    const {name,email,password,role,phone,} = data;
     if(!name) throw ApiError.badRequest("name is required");
     if(!email) throw ApiError.badRequest("email is required");
     if(!password) throw ApiError.badRequest("password is required");
     if(!role) throw ApiError.badRequest("role is required");
-    if(!phone) throw ApiError.badRequest("name is required");
+    if(!phone) throw ApiError.badRequest("phone is required");
 
     const existingUser = await User.findOne({email}).select("+password +refreshToken");
     if(existingUser) throw ApiError.conflict("User already exits");
@@ -44,7 +44,7 @@ const register = async (req, res)=>{
         name,
         email,
         password,
-        role,
+        role:"user", // client is "user" when first time enters
         phone,
         verificationToken:hashedToken,
     })
@@ -64,9 +64,9 @@ const register = async (req, res)=>{
 };
 
 // login user 
-const login = async (req,res)=>{
+const login = async (credetials,res)=>{
 
-    const{email,password} = req.body;
+    const{email,password} = credetials;
     if(!email) throw ApiError.badRequest("email is required");
     if(!password) throw ApiError.badRequest("password is required");
 
@@ -107,14 +107,14 @@ const refresh = async (token)=>{
 
     if(user.refreshToken !== hashToken(token)) throw ApiError.conflict("Invalid token");
 
-    const newAccessToken = generateAccessToken(user._id, user.role);
-    const newRefreshToken = generateRefreshToken(user._id, user.role);
+    const accessToken = generateAccessToken(user._id, user.role);
+    const refreshToken = generateRefreshToken(user._id, user.role);
 
-    user.refreshToken = hashToken(newRefreshToken);
+    user.refreshToken = hashToken(refreshToken);
 
     await user.save({validateBeforeSave:false});
 
-    return {newAccessToken , newRefreshToken};
+    return {accessToken , refreshToken};
 };
 
 //logout the user (remove the refreshToken from DB)
@@ -149,9 +149,9 @@ const forgotPassword = async (req,res)=>{
 };
 
 // resetPassword
-const resetPassword = async (req,token)=>{
+const resetPassword = async (data,token)=>{
 
-    const {password} = req.body;
+    const {password} = data;
     if(!password) throw ApiError.badRequest("Password is required");
     if(!token) throw ApiError.badRequest("didnt get token through email");
 
