@@ -27,7 +27,8 @@ const logout = async (req,res)=>{
 };
 
 const refresh = async(req,res)=>{
-    const accessAndrefreshTokens = await authService.refresh(req.cookies.refreshToken);
+
+    const {accessToken,refreshToken} = await authService.refresh(req.cookies.refreshToken);
 
     setAuthCookies(res, data.accessToken, data.refreshToken);
 
