@@ -1,4 +1,5 @@
 import * as authService from "./auth.service.js"
+import setAuthCookies from "../../common/utils/setAuthCookies.js";
 import ApiResponse from "../../common/utils/ApiResponse.js";
 
 const register = async (req,res)=>{
@@ -10,18 +11,7 @@ const register = async (req,res)=>{
 const login = async (req, res) => {
     const data = await authService.login(req.body);
 
-    res.cookie("refreshToken",data.refreshToken , {
-        httpOnly : true,
-        secure:true,
-        sameSite:"strict",
-        maxAge : 7*24 * 60 * 60 * 1000,
-    })
-    res.cookie("accessToken",data.accessToken , {
-        httpOnly : true,
-        secure:true,
-        sameSite:"strict", //
-        maxAge : 15*60*1000,
-    });
+    setAuthCookies(res, data.accessToken, data.refreshToken);
 
     ApiResponse.ok(res, "Login successful", data);
 };
@@ -38,6 +28,8 @@ const logout = async (req,res)=>{
 
 const refresh = async(req,res)=>{
     const accessAndrefreshTokens = await authService.refresh(req.cookies.refreshToken);
+
+    setAuthCookies(res, data.accessToken, data.refreshToken);
 
     ApiResponse.ok(res,"tokens refreshed",accessAndrefreshTokens)
 };
