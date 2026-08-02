@@ -10,8 +10,10 @@ const authenticate = async (req,res,next)=>{
     {
         token = req.headers.authorization.split(" ")[1];
     }
+    else if(req.cookies?.accessToken) token = req.cookies.accessToken;
 
     if(!token) throw ApiError.unauthorised("not authenticated");
+    
     const decoded = verifyAccessToken(token);
     if(!decoded) throw ApiError.unauthorised("Invalid or expired token")
 
