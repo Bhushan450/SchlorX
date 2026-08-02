@@ -32,7 +32,6 @@ const register = async (data, res)=>{
     if(!name) throw ApiError.badRequest("name is required");
     if(!email) throw ApiError.badRequest("email is required");
     if(!password) throw ApiError.badRequest("password is required");
-    if(!role) throw ApiError.badRequest("role is required");
     if(!phone) throw ApiError.badRequest("phone is required");
 
     const existingUser = await User.findOne({email}).select("+password +refreshToken");
