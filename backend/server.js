@@ -1,9 +1,8 @@
+import "dotenv/config";
 import connectDb from "./common/config/db.js"
 import app from "./src/app.js"
-import dotenv from "dotenv"
-dotenv.config();
 
-const PORT = process.env.PORT || 4040;
+const PORT = process.env.PORT || 4000;
 
 const start = async ()=>{
 
@@ -12,7 +11,7 @@ const start = async ()=>{
     try {
         
         app.listen(PORT, ()=>{
-            console.log(`Server is listning on port :${PORT} and in ${process.env.DEV_MODE}`);
+            console.log(`Server is listning on port :${PORT} and in ${process.env.NODE_ENV}`);
         })
     } catch (error) {
         console.log("Failed to start server", error);
