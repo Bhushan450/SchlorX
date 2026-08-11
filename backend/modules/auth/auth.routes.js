@@ -6,7 +6,6 @@ import ForgotPasswordDto from "./dto/forgotPassword.dto.js"
 import ResetPasswordDto from "./dto/resetPassword.dto.js"
 import validate from "../../common/middleware/validate.js"
 import {authenticate, authorize} from "./auth.middleware.js"
-import { valid } from "joi"
 
 const router = Router();
 
@@ -20,3 +19,4 @@ router.get('/verify-email/:token' , authController.verifyEmail)
 router.get('/getMe',authenticate , authController.getProfile )
 
 export default router;
+ 
