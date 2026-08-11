@@ -12,7 +12,7 @@ router.get(
     '/teacher/:teacherId',
     authenticate ,
     authorize("admin"),
-    validateObjectIds(teacherId),
+    validateObjectIds("teacherId"),
     adminController.getTeacherById
 );
 
@@ -20,7 +20,7 @@ router.patch(
     '/teacher/:teacherId' ,
     authenticate, 
     authorize("teacher"),
-    validateObjectIds(teacherId),
+    validateObjectIds("teacherId"),
     validate(UpdateTeacherDto), 
     adminController.updateTeacher 
 );
@@ -29,7 +29,7 @@ router.delete(
     '/teacher/:teacherId' , 
     authenticate,
     authorize("admin"),
-    validateObjectIds(teacherId),
+    validateObjectIds("teacherId"),
     adminController.deleteTeacher
 );
 
