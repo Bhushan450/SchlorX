@@ -58,6 +58,7 @@ const register = async (data, res)=>{
     const userObj = user.toObject();
     delete userObj.password;
     delete userObj.refreshToken;
+    // delete userObj.verificationToken;
 
     return userObj;
 };
@@ -104,7 +105,8 @@ const refresh = async (token)=>{
     const user = await User.findById(decoded._id).select("+refreshToken")
     if(!user) throw ApiError.notFound("User not found");
 
-    if(user.refreshToken !== hashToken(token)) throw ApiError.conflict("Invalid token");
+    //verify the refreshToken matches what's stored 
+    if(user.refreshToken !== hashToken(token)) throw ApiError.conflict("Invalid refresh token-Please login again");
 
     const accessToken = generateAccessToken(user._id, user.role);
     const refreshToken = generateRefreshToken(user._id, user.role);
@@ -116,12 +118,12 @@ const refresh = async (token)=>{
     return {accessToken , refreshToken};
 };
 
-//logout the user (remove the refreshToken from DB)
+// logout the user (remove the refreshToken from DB)
 const logout = async (userId)=>{
     await User.findByIdAndUpdate(userId,{refreshToken:null});
 };
 
-//forgotPassword
+// forgotPassword
 const forgotPassword = async (req,res)=>{
 
     const{email} = req.body;
