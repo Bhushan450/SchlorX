@@ -200,6 +200,14 @@ const getProfile = async (userId)=>{
     return user; 
 };
 
+// update profile.
+const updateProfile = async (data,userId)=>{
+
+    const{name, phone, email} = data;
+
+    
+}
+
 export {
     register,
     login,
