@@ -4,13 +4,14 @@ import app from "./src/app.js"
 
 const PORT = process.env.PORT || 4000;
 
-const start = async ()=>{
+const start = async () => {
 
     // connect with DB 
     await connectDb();
     try {
-        
-        app.listen(PORT, ()=>{
+        // console.log("CLIENT_URL =", process.env.CLIENT_URL);
+
+        app.listen(PORT, () => {
             console.log(`Server is listning on port :${PORT} and in ${process.env.NODE_ENV}`);
         })
     } catch (error) {
@@ -19,7 +20,7 @@ const start = async ()=>{
     }
 }
 
-start().catch((error)=>{
+start().catch((error) => {
     console.log("Failed to start Server");
     process.exit(1);
 })
