@@ -24,10 +24,10 @@ const attendenceSchema = new mongoose.Schema(
       enum: ["Present", "Absent"],
       required: true,
     },
-  },{ timestamps: true,});
+  }, { timestamps: true, });
 
 // Prevent duplicate attendance for the same student on the same date
-attendanceSchema.index(
+attendenceSchema.index(
   { student: 1, date: 1 },
   { unique: true }
 );
