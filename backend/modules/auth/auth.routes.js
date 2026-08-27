@@ -5,18 +5,17 @@ import RegisterDto from "./dto/register.dto.js"
 import ForgotPasswordDto from "./dto/forgotPassword.dto.js"
 import ResetPasswordDto from "./dto/resetPassword.dto.js"
 import validate from "../../common/middleware/validate.js"
-import {authenticate, authorize} from "./auth.middleware.js"
+import { authenticate, authorize } from "./auth.middleware.js"
 
-const router = Router();
+const authRoute = Router();
 
-router.post('/register',validate(RegisterDto), authController.register )
-router.post('/login', validate(LoginDto) , authController.login )
-router.post('/logout', authenticate, authController.logout )
-router.post('/refresh-tokens', authController.refresh )
-router.post('/forgot-password', validate(ForgotPasswordDto) , authController.forgotPassword )
-router.post('/reset-password/:token', validate(ResetPasswordDto) , authController.resetPassword )
-router.get('/verify-email/:token' , authController.verifyEmail)
-router.get('/getMe',authenticate , authController.getProfile )
+authRoute.post('/register', validate(RegisterDto), authController.register)
+authRoute.post('/login', validate(LoginDto), authController.login)
+authRoute.post('/logout', authenticate, authController.logout)
+authRoute.post('/refresh-tokens', authController.refresh)
+authRoute.post('/forgot-password', validate(ForgotPasswordDto), authController.forgotPassword)
+authRoute.post('/reset-password/:token', validate(ResetPasswordDto), authController.resetPassword)
+authRoute.get('/verify-email/:token', authController.verifyEmail)
+authRoute.get('/getMe', authenticate, authController.getProfile)
 
-export default router;
- 
+export default authRoute;
