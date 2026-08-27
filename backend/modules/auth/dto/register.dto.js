@@ -8,8 +8,7 @@ class RegisterDto extends BaseDto {
         email: joi.string().trim().email().required(),
         phone: joi.string().pattern(/^\d{10}$/).required(),
         password: joi.string().min(6).required(),
-        classAssigned: joi.string().optional(),
-    })  
+    })
 };
 
 export default RegisterDto;
