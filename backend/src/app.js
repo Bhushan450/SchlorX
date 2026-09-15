@@ -17,10 +17,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: process.env.CLIENT_URL,
         credentials: true,
     })
 );
+
+// Health check
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        success: true,
+        message: "SchlorX API is running",
+    });
+});
 
 app.use('/api/auth', authRoute);
 
