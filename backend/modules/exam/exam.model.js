@@ -4,11 +4,11 @@ const examSchema = new mongoose.Schema(
     {
         examType: {
             type: String,
-            enum: [
-                "unit_test",
-                "mid_semester",
-                "end_semester",
-            ],
+            // enum: [
+            //     "unit_test",
+            //     "mid_semester",
+            //     "end_semester",
+            // ],
             required: true,
         },
         class: {
@@ -30,7 +30,11 @@ const examSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
-    },{timestamps: true}
+    }, { timestamps: true }
+);
+examSchema.index(
+    { class: 1, examType: 1, academicYear: 1 },
+    { unique: true }
 );
 
 export default mongoose.model("Exam", examSchema);
