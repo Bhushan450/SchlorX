@@ -5,31 +5,31 @@ import ApiError from "../../common/utils/ApiError.js"
 
 
 // create student 
-const createStudent = async (data,classId)=>{
+const createStudent = async (data, classId) => {
 
-    const{name,rollNo,DOB,gender,parentPhone} = data;
+    const { name, rollNo, dob, gender, parentPhone } = data;
     // validations will done by DTO
 
-    if(!classId) throw ApiError.badRequest("classId is required")
+    if (!classId) throw ApiError.badRequest("classId is required")
 
-        const existingClass = await Class.findOne({
-        _id:classId,
+    const existingClass = await Class.findOne({
+        _id: classId,
     });
-    if(!existingClass) throw ApiError.notFound("No Class found , Please assign a class to student");
+    if (!existingClass) throw ApiError.notFound("No Class found , Please assign a class to student");
 
     const currentClassId = classId
 
     const existingStudent = await Student.findOne({
         rollNo,
-        classId:currentClassId
+        classId: currentClassId
     });
-    if(existingStudent) throw ApiError.conflict("Student already exits");
+    if (existingStudent) throw ApiError.conflict("Student already exits");
 
     const studentObj = await Student.create({
         name,
         rollNo,
-        classId:currentClassId,
-        DOB,
+        classId: currentClassId,
+        dob,
         gender,
         parentPhone,
     })
@@ -44,18 +44,18 @@ const createStudent = async (data,classId)=>{
 };
 
 // update student 
-const updateStudent = async (data,studentId,classId)=>{
+const updateStudent = async (data, studentId, classId) => {
 
-    const{name,rollNo,DOB,gender,parentPhone} = data
+    const { name, rollNo, dob, gender, parentPhone } = data
     // validations will done by DTO
 
-    if(!studentId) throw ApiError.badRequest("StudentId must be required");
+    if (!studentId) throw ApiError.badRequest("StudentId must be required");
 
     const currentClassId = classId
     // only allow updating those students who are belonging to this class only 
     const student = await Student.findOne({
-         _id: studentId,
-         classId: currentClassId,
+        _id: studentId,
+        classId: currentClassId,
     });
 
     if (!student) {
@@ -76,11 +76,11 @@ const updateStudent = async (data,studentId,classId)=>{
         }
     }
 
-    if(name)student.name = name;
-    if(rollNo)student.rollNo = rollNo;
-    if(DOB)student.DOB = DOB;
-    if(gender)student.gender = gender;
-    if(parentPhone)student.parentPhone = parentPhone;
+    if (name) student.name = name;
+    if (rollNo) student.rollNo = rollNo;
+    if (dob) student.dob = dob;
+    if (gender) student.gender = gender;
+    if (parentPhone) student.parentPhone = parentPhone;
 
     await student.save();
 
@@ -89,9 +89,9 @@ const updateStudent = async (data,studentId,classId)=>{
 };
 
 // get allStudents
-const getAllStudents = async (classId)=>{
+const getAllStudents = async (classId) => {
 
-    if(!classId) throw ApiError.badRequest("Teacher is not assigned to any class")
+    if (!classId) throw ApiError.badRequest("Teacher is not assigned to any class")
     const students = await Student.find({
         classId
     }).sort({ rollNo: 1 });
@@ -100,33 +100,36 @@ const getAllStudents = async (classId)=>{
 };
 
 //get studentBy ID
-const getStudentById = async(studentId,currentClassId)=>{
-    if(!studentId) throw ApiError.badRequest("StudentId is required");
-    if(!currentClassId) throw ApiError.badRequest("CurrenClassId is required")
+const getStudentById = async (studentId, currentClassId) => {
+    if (!studentId) throw ApiError.badRequest("StudentId is required");
+    if (!currentClassId) throw ApiError.badRequest("CurrenClassId is required")
 
     const student = await Student.findOne({
         _id: studentId,
         classId: currentClassId
     });
-    if(!student) throw ApiError.notFound("Student not found in this class");
+    if (!student) throw ApiError.notFound("Student not found in this class");
 
     return student;
 };
 
 //delete student
-const deleteStudent = async (studentId,currentClassId)=>{
-    if(!studentId) throw ApiError.badRequest("StudentId is required");
-    if(!currentClassId) throw ApiError.badRequest("Teacher is not assigned to class yet")
+const deleteStudent = async (studentId, currentClassId) => {
+    if (!studentId) throw ApiError.badRequest("StudentId is required");
+    if (!currentClassId) throw ApiError.badRequest("Teacher is not assigned to class yet")
 
     const student = await Student.findOne({
         _id: studentId,
         classId: currentClassId
     });
-    if(!student) throw ApiError.notFound("Student not found in this class");
+    if (!student) throw ApiError.notFound("Student not found in this class");
 
     await student.deleteOne();
 
-    return {message:"student deleted successfully"}
+    // after deleting student , decrease totalStudentsCount by 1
+    await Class.findByIdAndUpdate(currentClassId, { $inc: { totalStudents: -1 } });
+
+    return { message: "student deleted successfully" }
 };
 
 export {
