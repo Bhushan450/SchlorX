@@ -23,7 +23,6 @@ SchlorX is a full-stack classroom management web application that helps teachers
 - Nodemailer
 
 ### Other
-- Docker
 - Git & GitHub
 
 ## Features
@@ -89,12 +88,12 @@ SchlorX/
 └── README.md
 
 Getting Started-->
-
+-------------------
 Backend
 cd backend
 npm install
 npm run dev
-
+--------------------
 Frontend
 cd frontend
 npm install
