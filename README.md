@@ -86,3 +86,30 @@ SchlorX/
 │   └── .gitignore
 │
 └── README.md
+```
+## Getting Started
+
+### Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Create the `.env` files using the provided `.env.example` files.
+
+## Author
+
+**Bhushan Mhaske**
+GitHub: Bhushan450
+
+
