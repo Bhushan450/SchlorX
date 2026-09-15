@@ -1,7 +1,6 @@
 import express from "express";
 import * as teacherRequestController from "./teacherRequest.controller.js";
-import authenticate from "../../common/middleware/authenticate.js";
-import authorize from "../../common/middleware/authorize.js";
+import { authenticate, authorize } from "../auth/auth.middleware.js";
 import validateObjectIds from "../../common/middleware/id_validator.js";
 
 const router = express.Router();
@@ -20,15 +19,23 @@ router.post(
 
 // Get all pending teacher requests
 router.get(
-    "/teacherRequest",
+    "/",
     authenticate,
     authorize("admin"),
     teacherRequestController.getAllRequests
 );
 
+// get all users(approved & rejected)
+router.get(
+    "/processed",
+    authenticate,
+    authorize("admin"),
+    teacherRequestController.getProcessedRequests
+);
+
 // Get a specific teacher request
 router.get(
-    "teacherRequest/:requestId",
+    "/:requestId",
     authenticate,
     authorize("admin"),
     validateObjectIds("requestId"),
@@ -37,7 +44,7 @@ router.get(
 
 // Approve teacher request
 router.patch(
-    "teacherRequest/:requestId/approve",
+    "/:requestId/approve",
     authenticate,
     authorize("admin"),
     validateObjectIds("requestId"),
@@ -46,7 +53,7 @@ router.patch(
 
 // Reject teacher request
 router.patch(
-    "teacherRequest/:requestId/reject",
+    "/:requestId/reject",
     authenticate,
     authorize("admin"),
     validateObjectIds("requestId"),
