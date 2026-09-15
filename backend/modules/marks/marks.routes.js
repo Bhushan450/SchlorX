@@ -1,15 +1,15 @@
 import { Router } from "express";
 import * as marksController from "./marks.controller.js";
 import { authenticate, authorize } from "../auth/auth.middleware.js";
-import validate from "../../common/middlewares/validate.middleware.js";
+import validate from "../../common/middleware/validate.js";
 import validateObjectIds from "../../common/middleware/id_validator.js";
-import AddMarksDto from "./dto/addMarks.dto.js";
+import AddMarksDto from "./dto/addmarks.dto.js";
 
 const router = Router();
 
 // Add / Update marks
 router.post(
-    "/marks",
+    "/",
     authenticate,
     authorize("teacher"),
     validate(AddMarksDto),
@@ -18,7 +18,7 @@ router.post(
 
 // Get marks of an entire exam
 router.get(
-    "/marks/exam/:examId",
+    "/exam/:examId",
     authenticate,
     authorize("teacher"),
     validateObjectIds("examId"),
@@ -27,7 +27,7 @@ router.get(
 
 // Get all marks of a particular student
 router.get(
-    "/marks/student/:studentId",
+    "/student/:studentId",
     authenticate,
     authorize("teacher"),
     validateObjectIds("studentId"),
