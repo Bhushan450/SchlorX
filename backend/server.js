@@ -9,7 +9,6 @@ const start = async () => {
     // connect with DB 
     await connectDb();
     try {
-        // console.log("CLIENT_URL =", process.env.CLIENT_URL);
 
         app.listen(PORT, () => {
             console.log(`Server is listning on port :${PORT} and in ${process.env.NODE_ENV}`);
