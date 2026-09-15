@@ -1,40 +1,41 @@
 import mongoose from "mongoose"
 
 const studentSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        trim:true,
-        minlength:1,
-        maxlength:20,
-        required:[true,"Student name is required"]
+    name: {
+        type: String,
+        trim: true,
+        minlength: 1,
+        maxlength: 20,
+        required: [true, "Student name is required"]
     },
-    rollNo:{
-        type:Number,
-        min:0,
-        max:150,
-        unique:true,
-        required:[true,"Roll no. is required"]
+    rollNo: {
+        type: Number,
+        min: 0,
+        max: 150,
+        required: [true, "Roll no. is required"]
     },
-    classId:{
+    classId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref:"Class",
-        default:null,
+        ref: "Class",
+        default: null,
     },
-    DOB:{
-        type:Date,  
+    dob: {
+        type: Date,
     },
-    gender:{
-        type:String,
-        trim:true,
-        enum:["male","female","other"],
+    gender: {
+        type: String,
+        trim: true,
+        enum: ["Male", "Female", "Other"],
     },
-    parentPhone:{
-        type:String,
-        trim:true,
-        minlength:10,
-        maxlength:10,
+    parentPhone: {
+        type: String,
+        trim: true,
+        minlength: 10,
+        maxlength: 10,
     },
 
-},{timestamps:true});
+}, { timestamps: true });
+// add below the schema definition
+studentSchema.index({ classId: 1, rollNo: 1 }, { unique: true });
 
-export default mongoose.model("Student",studentSchema);
+export default mongoose.model("Student", studentSchema);
