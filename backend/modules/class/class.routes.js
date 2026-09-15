@@ -3,25 +3,27 @@ import validate from "../../common/middleware/validate.js"
 import validateObjectIds from "../../common/middleware/id_validator.js"
 import CreateClassDto from "./dto/classCreate.dto.js"
 import UpdateClassDto from "./dto/updateClass.dto.js"
-import {authenticate, authorize} from "./auth.middleware.js"
+import { authenticate, authorize } from "../auth/auth.middleware.js"
 import { Router } from "express"
 
 const router = Router();
 
 router.post(
-    '/createClass',
+    '/',
     authenticate,
     authorize("teacher"),
+    validate(CreateClassDto),
     classController.createClass
 );
 router.patch(
-    '/updateClass/:classId', 
+    '/:classId',
     authenticate,
     authorize("teacher"),
     validateObjectIds("classId"),
+    validate(UpdateClassDto),
     classController.updateClass
 );
-router.get('/allClaases', 
+router.get('/allClaases',
     authenticate,
     authorize("teacher"),
     classController.getAllclasses,
@@ -33,7 +35,7 @@ router.get('/getClass/:classId',
     classController.getClassById
 );
 router.delete(
-    '/deleteClass/:classId', 
+    '/deleteClass/:classId',
     authenticate,
     authorize("teacher"),
     validateObjectIds("classId"),
