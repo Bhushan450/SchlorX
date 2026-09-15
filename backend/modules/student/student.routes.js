@@ -2,14 +2,14 @@ import * as studentController from "./student.controller.js"
 import CreateStudentDto from "./dto/createStudent.dto.js"
 import UpdateStudentDto from "./dto/updateStudent.dto.js"
 import validateObjectIds from "../../common/middleware/id_validator.js"
-import {authenticate, authorize} from "../auth/auth.middleware.js"
+import { authenticate, authorize } from "../auth/auth.middleware.js"
 import { Router } from "express"
 import validate from "../../common/middleware/validate.js"
 
 const router = Router();
 
 router.post(
-    '/Student',
+    '/',
     authenticate,
     authorize("teacher"),
     validate(CreateStudentDto),
@@ -17,7 +17,7 @@ router.post(
 );
 
 router.patch(
-    '/Student/:studentId',
+    '/:studentId',
     authenticate,
     authorize("teacher"),
     validateObjectIds("studentId"),
@@ -33,7 +33,7 @@ router.get(
 );
 
 router.get(
-    '/student/:studentId',
+    '/:studentId',
     authenticate,
     authorize("teacher"),
     validateObjectIds("studentId"),
@@ -41,9 +41,9 @@ router.get(
 );
 
 router.delete(
-    '/deleteStudents/:studentId',
+    '/:studentId',
     authenticate,
-    authorize("tecaher"),
+    authorize("teacher"),
     validateObjectIds("studentId"),
     studentController.deleteStudent
 );
