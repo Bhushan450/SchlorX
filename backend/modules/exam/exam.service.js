@@ -3,18 +3,18 @@ import Exam from "./exam.model.js";
 import User from "../auth/auth.model.js"
 
 // create Exam
-const createExam = async (examData,classTeacherId)=>{
+const createExam = async (examData, classTeacherId) => {
 
-    const {examType , academicYear, examDate} = examData;
-    if(!examType || !academicYear || !examDate) throw ApiError.badRequest("Enter the valud fields");
+    const { examType, academicYear, examDate } = examData;
+    if (!examType || !academicYear || !examDate) throw ApiError.badRequest("Enter the valid fields");
 
     const existingTeacher = await User.findOne({
-        _id:classTeacherId,
-        role:"teacher",
+        _id: classTeacherId,
+        role: "teacher",
     });
-    if(!existingTeacher) throw ApiError.notFound("Teacher not found");
+    if (!existingTeacher) throw ApiError.notFound("Teacher not found");
 
-    if(!existingTeacher.classAssigned) throw ApiError.badRequest("Teacher has no assigned class")
+    if (!existingTeacher.classAssigned) throw ApiError.badRequest("Teacher has no assigned class")
 
     const existingExam = await Exam.findOne({
         class: existingTeacher.classAssigned,
@@ -22,7 +22,7 @@ const createExam = async (examData,classTeacherId)=>{
         academicYear,
         examDate,
     });
-    if(existingExam) throw ApiError.conflict("Exam already exist");
+    if (existingExam) throw ApiError.conflict("Exam already exist");
 
     const examObj = await Exam.create({
         examType,
@@ -36,11 +36,11 @@ const createExam = async (examData,classTeacherId)=>{
 };
 
 // update Exam
-const updateExam = async (dataChange,examId,classTeacherId) =>{
+const updateExam = async (dataChange, examId, classTeacherId) => {
 
-    const {examType,academicYear,examDate} = dataChange;
+    const { examType, academicYear, examDate } = dataChange;
     // valiations will done by DTO
-    if(!examId) throw ApiError.badRequest("ExamId is required");
+    if (!examId) throw ApiError.badRequest("ExamId is required");
 
     // Check whether the user is a teacher
     const teacher = await User.findOne({
@@ -51,28 +51,28 @@ const updateExam = async (dataChange,examId,classTeacherId) =>{
     if (!teacher) {
         throw ApiError.notFound("Teacher not found");
     }
-    
+
     // check if the teacher has class assigned or not
     if (!teacher.classAssigned) {
         throw ApiError.badRequest("Teacher has no assigned class");
     }
 
 
-   const existingExam = await Exam.findOne({
-        _id:examId,
+    const existingExam = await Exam.findOne({
+        _id: examId,
         class: teacher.classAssigned
-        
+
     });
-    if(!existingExam) throw ApiError.notFound("Exam not exits");
+    if (!existingExam) throw ApiError.notFound("Exam not exits");
 
     const duplicateExam = await Exam.findOne({
         _id: { $ne: examId },
         class: teacher.classAssigned,
-        examType,
-        academicYear,
-        examDate,
+        examType: examType ?? existingExam.examType,
+        academicYear: academicYear ?? existingExam.academicYear,
+        examDate: examDate ?? existingExam.examDate,
     });
-    
+
     if (duplicateExam) {
         throw ApiError.conflict("Exam already exists, Please make a valid changes");
     };
@@ -88,21 +88,21 @@ const updateExam = async (dataChange,examId,classTeacherId) =>{
 };
 
 // get all exams of a class
-const getAllExams = async (classTeacherId)=>{
-    if(!classTeacherId) throw ApiError.badRequest("coudnlt found classTeacher Id");
+const getAllExams = async (classTeacherId) => {
+    if (!classTeacherId) throw ApiError.badRequest("coudnlt found classTeacher Id");
 
     const existingTeacher = await User.findOne({
         _id: classTeacherId,
         role: "teacher"
     });
-    if(!existingTeacher) throw ApiError.notFound("Teacher not found");
+    if (!existingTeacher) throw ApiError.notFound("Teacher not found");
 
-    if(!existingTeacher.classAssigned) throw ApiError.badRequest("Teacher has no assigned class");
+    if (!existingTeacher.classAssigned) throw ApiError.badRequest("Teacher has no assigned class");
 
     // find all exams of a class
     const allExams = await Exam.find({
         class: existingTeacher.classAssigned,
-    }).sort({examDate:-1 ,})   // Sort exams by exam date, newest first
+    }).sort({ examDate: -1, })   // Sort exams by exam date, newest first
 
     // if there is no exam created - will get empty array
 
