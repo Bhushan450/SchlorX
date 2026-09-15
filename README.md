@@ -42,27 +42,28 @@ SchlorX is a full-stack classroom management web application that helps teachers
 
 ## Project Structure
 
+```text
 SchlorX/
 │
 ├── backend/
 │   │
 │   ├── common/
-│   │   ├── config/          # Database and application configuration
-│   │   ├── middleware/      # Authentication, authorization, validation, etc.
-│   │   └── utils/           # Common utility functions
+│   │   ├── config/           # Database and application configuration
+│   │   ├── middleware/       # Authentication, authorization, validation, etc.
+│   │   └── utils/            # Common utility functions
 │   │
 │   ├── modules/
-│   │   ├── auth/            # Authentication and user management
-│   │   ├── teacher/         # Teacher management
-│   │   ├── teacher_request/ # Teacher access requests
-│   │   ├── class/           # Class management
-│   │   ├── student/         # Student management
-│   │   ├── attendence/      # Attendance management
-│   │   ├── exam/            # Examination management
+│   │   ├── auth/             # Authentication and user management
+│   │   ├── teacher/          # Teacher management
+│   │   ├── teacher_request/  # Teacher access requests
+│   │   ├── class/            # Class management
+│   │   ├── student/          # Student management
+│   │   ├── attendence/       # Attendance management
+│   │   ├── exam/             # Examination management
 │   │   └── marks/            # Marks management
 │   │
 │   ├── src/
-│   │   └── app.js           # Express application and routes
+│   │   └── app.js            # Express application and routes
 │   │
 │   ├── server.js             # Server entry point
 │   ├── package.json
@@ -72,13 +73,13 @@ SchlorX/
 ├── frontend/
 │   │
 │   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/           # Application pages
-│   │   ├── layouts/         # Application layouts
-│   │   ├── services/        # API service functions
-│   │   ├── context/         # React context
-│   │   ├── hooks/           # Custom React hooks
-│   │   └── routes/          # Frontend routing
+│   │   ├── components/       # Reusable UI components
+│   │   ├── pages/            # Application pages
+│   │   ├── layouts/          # Application layouts
+│   │   ├── services/         # API service functions
+│   │   ├── context/          # React context
+│   │   ├── hooks/            # Custom React hooks
+│   │   └── routes/           # Frontend routing
 │   │
 │   ├── public/
 │   ├── package.json
@@ -87,6 +88,7 @@ SchlorX/
 │
 └── README.md
 
+Getting Started-->
 
 Backend
 cd backend
