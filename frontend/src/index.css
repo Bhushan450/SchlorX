@@ -1,0 +1,406 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%; /* #f8fafc clean light slate */
+    --foreground: 222.2 84% 4.9%; /* #0f172a crisp dark charcoal text */
+
+    --card: 0 0% 100%; /* #ffffff pure white card */
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 221.2 83.2% 53.3%; /* #2563eb clean SchlorX blue */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%; /* #f1f5f9 soft slate */
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%; /* #64748b clear readable gray */
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%; /* #e2e8f0 crisp border */
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* ── Dark Mode Surface Hierarchy ──────────────────────────────────────
+     * Five distinct charcoal/graphite layers provide visual depth without
+     * using dark-blue. The differences are intentionally subtle.
+     *
+     * background        #0A0A0A  — page canvas (deepest)
+     * --surface         #101010  — hero / primary sections
+     * --surface-elev    #161616  — secondary sections (How it Works)
+     * card              #1A1A1A  — card surfaces
+     * accent/hover      #202020  — interactive hover surfaces
+     * border            #262626  — visible but low-contrast dividers
+     * ────────────────────────────────────────────────────────────────── */
+
+    --background: 0 0% 4%;           /* #0A0A0A  deepest background */
+    --foreground: 0 0% 93%;          /* #EDEDED  bright readable text */
+
+    /* Section surface tokens — used directly as CSS vars in index.css classes */
+    --surface:          #101010;     /* hero & features section bg */
+    --surface-elevated: #161616;     /* "How SchlorX Works" section bg */
+
+    --card: 0 0% 10%;                /* #1A1A1A  card surface */
+    --card-foreground: 0 0% 93%;
+
+    --popover: 0 0% 10%;             /* #1A1A1A  popover surface */
+    --popover-foreground: 0 0% 93%;
+
+    --primary: 221.2 83.2% 53.3%;   /* #2563EB  SchlorX blue accent */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 11%;           /* #1C1C1C  secondary surface */
+    --secondary-foreground: 0 0% 88%;
+
+    --muted: 0 0% 11%;               /* #1C1C1C  muted surface */
+    --muted-foreground: 0 0% 52%;    /* #858585  readable muted text */
+
+    --accent: 0 0% 13%;              /* #212121  hover surface */
+    --accent-foreground: 0 0% 93%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 0 0% 15%;              /* #262626  subtle charcoal border */
+    --input: 0 0% 15%;               /* #262626  input border */
+    --ring: 221.2 83.2% 53.3%;      /* #2563EB  focus ring */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    /* Smooth theme switch — background, color, border all animate together */
+    transition: background-color 0.2s ease, color 0.15s ease;
+  }
+}
+
+/* ── Landing Page Design System ──────────────────────────────────────────────
+ * All .lp-* classes are scoped to the landing page only.
+ * The gap-px grid technique is used for steps/features:
+ *   parent background = border color → shows as 1px lines between children
+ *   children background = section surface color
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+/* ── Hero ambient glow ── */
+.lp-hero-glow {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(900px, 100vw);
+  height: 600px;
+  background: radial-gradient(ellipse at 50% 30%,
+    rgba(108, 71, 255, 0.07) 0%,
+    rgba(108, 71, 255, 0.03) 40%,
+    transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+.dark .lp-hero-glow {
+  background: radial-gradient(ellipse at 50% 30%,
+    rgba(108, 71, 255, 0.14) 0%,
+    rgba(108, 71, 255, 0.05) 40%,
+    transparent 70%);
+}
+
+/* ── Product preview frame ── */
+.lp-preview-frame {
+  background: hsl(var(--card));
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.06),
+    0 8px 32px rgba(0,0,0,0.06),
+    0 2px 8px rgba(0,0,0,0.04);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.dark .lp-preview-frame {
+  background: #111111;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.055),
+    0 8px 32px rgba(0,0,0,0.5),
+    0 2px 8px rgba(0,0,0,0.3);
+}
+.lp-preview-titlebar {
+  background: hsl(var(--muted));
+  transition: background-color 0.2s ease;
+}
+.dark .lp-preview-titlebar {
+  background: #0D0D0D;
+}
+
+/* ── Steps grid (gap-px technique) ── */
+.lp-steps-grid {
+  background: hsl(var(--border));   /* visible as 1px lines between cells */
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.875rem;
+  overflow: hidden;
+}
+.dark .lp-steps-grid {
+  background: #222222;
+  border-color: #222222;
+}
+.lp-step-item {
+  background: hsl(var(--background));
+  transition: background-color 0.15s ease;
+  cursor: default;
+}
+.lp-step-item:hover {
+  background: hsl(var(--accent));
+}
+.dark .lp-step-item {
+  background: #0D0D0D;
+}
+.dark .lp-step-item:hover {
+  background: #131313;
+}
+
+/* ── Features grid (gap-px technique) ── */
+.lp-features-grid {
+  background: hsl(var(--border));
+  border: 1px solid hsl(var(--border));
+  border-radius: 0.875rem;
+  overflow: hidden;
+}
+.dark .lp-features-grid {
+  background: #1E1E1E;
+  border-color: #1E1E1E;
+}
+.lp-feature-item {
+  background: hsl(var(--background));
+  transition: background-color 0.15s ease;
+}
+.lp-feature-item:hover {
+  background: hsl(var(--accent));
+}
+.dark .lp-feature-item {
+  background: #0D0D0D;
+}
+.dark .lp-feature-item:hover {
+  background: #131313;
+}
+
+/* ── CTA section glow ── */
+.lp-cta-section {
+  position: relative;
+  overflow: hidden;
+}
+.lp-cta-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 400px;
+  background: radial-gradient(ellipse,
+    rgba(108, 71, 255, 0.06) 0%,
+    transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+.dark .lp-cta-glow {
+  background: radial-gradient(ellipse,
+    rgba(108, 71, 255, 0.12) 0%,
+    transparent 65%);
+}
+
+/* Custom subtle scrollbar adapt to theme */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50 transition-colors;
+}
+
+/* Academic Ledger style matrix adapting dynamically to theme */
+.academic-table th {
+  @apply bg-muted/60 text-muted-foreground text-xs font-semibold uppercase tracking-wider py-3 px-4 text-left border-b border-border;
+}
+
+.academic-table td {
+  @apply py-3.5 px-4 text-sm border-b border-border/60 text-foreground;
+}
+
+.academic-table tr:hover td {
+  @apply bg-accent/50;
+}
+
+/* ── Lightweight Academic Background Animation ───────────────────────────── */
+.hero-academic-background {
+  position: absolute;
+  inset: 0;
+  background: transparent !important;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.academic-element {
+  position: absolute;
+  will-change: transform, opacity;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.12; /* Light mode default */
+}
+
+/* Base dark mode visibility */
+.dark .academic-element {
+  opacity: 0.16;
+}
+
+/* --- Color Palette --- */
+/* Blue */
+.academic-blue { color: #3B82F6; }
+.dark .academic-blue { color: #60A5FA; filter: drop-shadow(0 0 4px rgba(96, 165, 250, 0.4)); }
+
+/* Purple */
+.academic-purple { color: #8B5CF6; }
+.dark .academic-purple { color: #A78BFA; filter: drop-shadow(0 0 4px rgba(167, 139, 250, 0.4)); }
+
+/* Green */
+.academic-green { color: #10B981; }
+.dark .academic-green { color: #34D399; filter: drop-shadow(0 0 4px rgba(52, 211, 153, 0.4)); }
+
+/* Amber */
+.academic-amber { color: #F59E0B; }
+.dark .academic-amber { color: #FBBF24; filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.4)); }
+
+/* Generic Text Color for generic elements */
+.academic-document, .academic-notebook {
+  color: hsl(var(--muted-foreground));
+}
+.dark .academic-document, .dark .academic-notebook {
+  color: hsl(var(--muted-foreground));
+  filter: drop-shadow(0 0 4px rgba(140, 140, 140, 0.2));
+}
+
+/* Dots */
+.academic-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: hsl(var(--primary));
+  opacity: 0.2;
+}
+.dark .academic-dot {
+  background-color: hsl(var(--primary));
+  opacity: 0.3;
+  box-shadow: 0 0 4px hsl(var(--primary));
+}
+
+/* Icon Sizing */
+.academic-element svg {
+  width: 42px;
+  height: 42px;
+}
+
+/* --- Element Positions & Assignments --- */
+
+.academic-book { top: 12%; left: 8%; animation: floatDiag 18s ease-in-out infinite alternate; }
+.academic-users { bottom: 15%; right: 25%; animation: floatVert 20s ease-in-out infinite alternate; }
+
+.academic-pencil { top: 18%; right: 12%; animation: rotateGentle 15s ease-in-out infinite alternate; }
+.academic-graduation { top: 35%; left: 15%; animation: floatDiag 22s ease-in-out infinite alternate; }
+
+.academic-checklist { bottom: 25%; left: 10%; animation: floatVert 19s ease-in-out infinite alternate; }
+.academic-checkcircle { top: 45%; right: 18%; animation: rotateGentle 25s ease-in-out infinite alternate; }
+
+.academic-calendar { bottom: 10%; right: 8%; animation: floatDiag 24s ease-in-out infinite alternate; }
+.academic-star { top: 25%; left: 30%; opacity: 0.08; animation: breatheOpacity 16s ease-in-out infinite alternate; }
+
+.academic-document { top: 55%; left: 20%; animation: floatVert 21s ease-in-out infinite alternate; }
+.academic-notebook { bottom: 35%; right: 15%; animation: floatDiag 26s ease-in-out infinite alternate; }
+
+/* Dot Positions */
+.academic-dot-1 { top: 20%; left: 15%; animation: floatDiag 12s ease-in-out infinite alternate-reverse; }
+.academic-dot-2 { top: 50%; right: 22%; animation: floatVert 14s ease-in-out infinite alternate-reverse; }
+.academic-dot-3 { bottom: 20%; left: 25%; animation: floatDiag 16s ease-in-out infinite alternate-reverse; }
+.academic-dot-4 { bottom: 30%; right: 10%; animation: floatVert 18s ease-in-out infinite alternate-reverse; }
+
+
+/* --- Animations --- */
+
+/* Diagonal floating */
+@keyframes floatDiag {
+  0% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(25px, 25px, 0) rotate(5deg); }
+  100% { transform: translate3d(-15px, 35px, 0) rotate(-2deg); }
+}
+
+/* Vertical floating */
+@keyframes floatVert {
+  0% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -30px, 0); }
+  100% { transform: translate3d(0, 10px, 0); }
+}
+
+/* Gentle Rotation */
+@keyframes rotateGentle {
+  0% { transform: translate3d(0, 0, 0) rotate(-4deg); }
+  50% { transform: translate3d(15px, -10px, 0) rotate(4deg); }
+  100% { transform: translate3d(-10px, 15px, 0) rotate(-4deg); }
+}
+
+/* Opacity Breathing (keeps transform zeroed) */
+@keyframes breatheOpacity {
+  0% { transform: translate3d(0, 0, 0); opacity: 0.08; }
+  50% { transform: translate3d(0, 0, 0); opacity: 0.16; }
+  100% { transform: translate3d(0, 0, 0); opacity: 0.08; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .academic-element {
+    animation: none !important;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .academic-element svg {
+    width: 28px;
+    height: 28px;
+  }
+  .academic-element {
+    opacity: 0.08;
+  }
+  .dark .academic-element {
+    opacity: 0.12;
+  }
+  
+  /* Keep only a few essential ones for mobile */
+  .academic-book { top: 8%; left: 5%; }
+  .academic-pencil { top: 8%; right: 5%; }
+  .academic-checklist { bottom: 8%; left: 5%; }
+  .academic-calendar { bottom: 8%; right: 5%; }
+  
+  /* Hide the rest to avoid clutter */
+  .academic-users, .academic-graduation, .academic-checkcircle, 
+  .academic-star, .academic-document, .academic-notebook,
+  .academic-dot { display: none; }
+}
