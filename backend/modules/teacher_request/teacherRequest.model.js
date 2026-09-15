@@ -6,7 +6,7 @@ const teacherRequestSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
             required: true,
-            unique: true, // One pending request per user
+            // unique: true, // One pending request per user
         },
 
         status: {
@@ -24,6 +24,10 @@ const teacherRequestSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+teacherRequestSchema.index(
+    { userId: 1 },
+    { unique: true, partialFilterExpression: { status: "pending" } }
+);
 
 
-export default mongoose.model("teacherRequestModel", teacherRequestSchema);
+export default mongoose.model("TeacherRequest", teacherRequestSchema);
