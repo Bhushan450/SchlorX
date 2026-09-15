@@ -1,7 +1,8 @@
-import express from "express"
+import express from "express";
+import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoute from "../modules/auth/auth.routes.js";
-import teacherRoute from "../modules/teacher/admin.routes.js";
+import teacherRoute from "../modules/teacher/teacher.routes.js";
 import teacherRequestRoute from "../modules/teacher_request/teacherRequest.routes.js";
 import classRoute from "../modules/class/class.routes.js";
 import studentRoute from "../modules/student/student.routes.js";
@@ -12,10 +13,16 @@ import marksRoute from "../modules/marks/marks.routes.js";
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+    })
+);
 
-app.use('/api/auth' , authRoute);
+app.use('/api/auth', authRoute);
 
 app.use("/api/teacher", teacherRoute);
 
