@@ -48,18 +48,18 @@ const sendVerificationEmail = async (email, token) => {
     );
 };
 
-const sendOrderConfirmationEmail = async (email, order) => {
-    const items = order.items
-        .map((i) => `<li>${i.title} x ${i.quantity} - ${i.price}</li>`)
-        .join("");
+// const sendOrderConfirmationEmail = async (email, order) => {
+//     const items = order.items
+//         .map((i) => `<li>${i.title} x ${i.quantity} - ${i.price}</li>`)
+//         .join("");
 
-    await sendMail(
-        email,
-        `Order Confirmed - ${order.orderNumber}`,
-        `<h2>Order confirmed</h2>
-        <p>Order: ${order.orderNumber}</p>`
-    );
-};
+//     await sendMail(
+//         email,
+//         `Order Confirmed - ${order.orderNumber}`,
+//         `<h2>Order confirmed</h2>
+//         <p>Order: ${order.orderNumber}</p>`
+//     );
+// };
 
 const sendResetPasswordEmail = async (email, token) => {
     const url = `${process.env.CLIENT_URL}/reset-password/${token}`;
@@ -82,6 +82,6 @@ const sendResetPasswordEmail = async (email, token) => {
 export {
     sendMail,
     sendVerificationEmail,
-    sendOrderConfirmationEmail,
+    // sendOrderConfirmationEmail,
     sendResetPasswordEmail
 }
