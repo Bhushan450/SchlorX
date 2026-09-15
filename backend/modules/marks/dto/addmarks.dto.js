@@ -5,32 +5,29 @@ class AddMarksDto extends BaseDto {
 
     static schema = Joi.object({
         subject: Joi.string()
-        .valid(
-            "Mathematics",
-            "Science",
-            "English",
-            "Marathi",
-            "Hindi",
-            "Geography",
-            "History",    
-            "Sanskrit",
-            "Sports",
-            "Other Activities"
-        )
-        .required(),
-        
+            .valid(
+                "Mathematics",
+                "Science",
+                "English",
+                "Marathi",
+                "Hindi",
+                "Geography",
+                "History",
+                "Sanskrit",
+                "Sports",
+                "Other Activities"
+            )
+            .required()
+            .messages({
+                "any.only": "Invalid subject",
+                "any.required": "Subject is required",
+            }),
+
         examId: Joi.string()
             .required()
             .messages({
                 "string.empty": "ExamId is required",
                 "any.required": "ExamId is required",
-            }),
-
-        subject: Joi.string()
-            .required()
-            .messages({
-                "string.empty": "Subject is required",
-                "any.required": "Subject is required",
             }),
 
         totalMarks: Joi.number()
