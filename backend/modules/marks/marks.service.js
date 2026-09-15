@@ -4,7 +4,7 @@ import User from "../auth/auth.model.js"
 import Exam from "../exam/exam.model.js";
 import Student from "../student/student.model.js"
 
-const SUBJECTS=[
+const SUBJECTS = [
     "Mathematics",
     "Science",
     "English",
@@ -20,7 +20,7 @@ const SUBJECTS=[
 // add marks of student
 const addMarks = async (data, teacherId) => {
 
-    const {examId,subject,totalMarks,students} = data;
+    const { examId, subject, totalMarks, students } = data;
 
     // Validations
     if (!examId) throw ApiError.badRequest("ExamId is required");
@@ -32,7 +32,7 @@ const addMarks = async (data, teacherId) => {
         totalMarks === null ||
         totalMarks <= 0
     ) throw ApiError.badRequest("Valid total marks is required");
-    
+
     if (!students || students.length === 0)
         throw ApiError.badRequest("Students marks are required");
 
@@ -50,9 +50,7 @@ const addMarks = async (data, teacherId) => {
         throw ApiError.notFound("Teacher not found");
 
     if (!teacher.classAssigned)
-        throw ApiError.badRequest(
-            "Teacher has no class assigned"
-        );
+        throw ApiError.badRequest("Teacher has no class assigned");
 
     const classId = teacher.classAssigned;
 
@@ -64,21 +62,27 @@ const addMarks = async (data, teacherId) => {
     });
 
     if (!existingExam)
-        throw ApiError.notFound(
-            "Exam not found for your assigned class"
-        );
+        throw ApiError.notFound("Exam not found for your assigned class");
+
+    // Batch-fetch all students belonging to this class in ONE query,
+    // instead of one findOne() per student inside the loop.
+    const studentIds = students.map((s) => s.studentId);
+
+    const validStudents = await Student.find({
+        _id: { $in: studentIds },
+        classId: classId
+    }).select("_id");
+
+    const validStudentIdSet = new Set(
+        validStudents.map((s) => s._id.toString())
+    );
 
     const records = [];
 
     for (const student of students) {
 
-        // Check student belongs to teacher's class
-        const existingStudent = await Student.findOne({
-            _id: student.studentId,
-            classId: classId
-        });
-
-        if (!existingStudent) {
+        // Check student belongs to teacher's class (from the pre-fetched set)
+        if (!validStudentIdSet.has(student.studentId.toString())) {
             throw ApiError.notFound(
                 `Student ${student.studentId} not found in your class`
             );
@@ -114,7 +118,6 @@ const addMarks = async (data, teacherId) => {
             }
         });
     }
-
 
     // Insert new OR update existing marks
     const marks = await Marks.bulkWrite(records);
@@ -167,12 +170,6 @@ const getMarksByExam = async (examId, teacherId) => {
         .populate("student", "name rollNo")
         .sort({ createdAt: 1 });
 
-    if (marks.length === 0) {
-        throw ApiError.notFound(
-            "No marks found for this exam"
-        );
-    }
-
     return marks;
 };
 
@@ -189,7 +186,7 @@ const getMarksByStudent = async (studentId, teacherId) => {
     if (!teacher) throw ApiError.notFound("Teacher not found");
 
     if (!teacher.classAssigned) throw ApiError.badRequest("Teacher has no class assigned");
-    
+
     const student = await Student.findOne({
         _id: studentId,
         classId: teacher.classAssigned,
@@ -200,11 +197,8 @@ const getMarksByStudent = async (studentId, teacherId) => {
     const marks = await Marks.find({
         student: studentId,
     }).populate("exam", "examType academicYear examDate")
-      .populate("student", "name rollNo")
-      .sort({ createdAt: -1 });
-        
-
-    if (marks.length === 0) throw ApiError.notFound("No marks found for this student");
+        .populate("student", "name rollNo")
+        .sort({ createdAt: -1 });
 
     return marks;
 };
