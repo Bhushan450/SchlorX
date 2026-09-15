@@ -6,29 +6,29 @@ import ApiError from "../../common/utils/ApiError.js";
 import teacherRequestModel from "../teacher_request/teacherRequest.model.js";
 
 // create class
-const createClass = async (data,teacherId)=>{
+const createClass = async (data, teacherId) => {
 
-    const{className,academicYear} = data;
+    const { className, academicYear } = data;
     // validations will done through DTO 
 
     const teacher = await User.findOne({
-        _id:teacherId,
-        role:"teacher",
+        _id: teacherId,
+        role: "teacher",
     })
-    if(!teacher) throw ApiError.notFound("Teacher not found");
-    if(teacher.classAssigned) throw ApiError.conflict("Teacher is already assigned to class")
+    if (!teacher) throw ApiError.notFound("Teacher not found");
+    if (teacher.classAssigned) throw ApiError.conflict("Teacher is already assigned to class")
 
 
     const existingClass = await Class.findOne({
         className,
         academicYear,
+        classTeacher: teacherId
     });
-    if(existingClass) throw ApiError.conflict("Class already exits");
+    if (existingClass) throw ApiError.conflict("You have already created this class for this academic year");
 
     const classObj = await Class.create({
         className,
-        classTeacher:teacherId,
-        totalStudents,
+        classTeacher: teacherId,
         academicYear,
     });
 
@@ -40,13 +40,13 @@ const createClass = async (data,teacherId)=>{
 };
 
 // update class 
-const updateClass = async(classData, classId)=>{
+const updateClass = async (classData, classId) => {
 
-    const{className,section,totalStudents,academicYear} = req.body;
-    if(!name || ! section || !totalStudents || !academicYear) throw ApiError.badRequest("all fields are required");
+    const { className, section, totalStudents, academicYear } = classData;
+    if (!className || !section || !totalStudents || !academicYear) throw ApiError.badRequest("all fields are required");
 
     const existingClass = await Class.findById(classId);
-    if(!existingClass) throw ApiError.notFound("Class not found");
+    if (!existingClass) throw ApiError.notFound("Class not found");
 
     existingClass.className = className;
     existingClass.section = section;
@@ -59,30 +59,30 @@ const updateClass = async(classData, classId)=>{
 };
 
 //get all classes
-const getAllclasses = async ()=>{
+const getAllclasses = async () => {
 
     const classes = await Class.find() // returns all documents of Class model
 
     return classes;
-    
+
 };
 
 // get class by id
-const getClassById = async (classId)=>{
-    if(!classId) throw ApiError.badRequest("ClassId is required")
+const getClassById = async (classId) => {
+    if (!classId) throw ApiError.badRequest("ClassId is required")
 
     const classObj = await Class.findById(classId)
-    .populate("_id","className","classTeacher","email");
+        .populate("classTeacher", "name email phone");
 
-    if(!classObj) throw ApiError.notFound("Class not found on this id");
+    if (!classObj) throw ApiError.notFound("Class not found on this id");
 
     return classObj;
 };
 
 // delete class
-const deleteClass = async (classId)=>{
+const deleteClass = async (classId) => {
 
-    if(!classId) throw ApiError.badRequest("ClassId is required");
+    if (!classId) throw ApiError.badRequest("ClassId is required");
 
     // implemented a rollBack functionality
     // Start MongoDB session
@@ -94,26 +94,25 @@ const deleteClass = async (classId)=>{
         session.startTransaction();
 
         const classObj = await Class.findById(classId).session(session)
-        if(!classObj) throw ApiError.notFound("Class not found on this Id");
-    
-        const teacherObj = await User.findOne({classAssigned:classId}).session(session)
-        if(teacherObj) 
-        {
+        if (!classObj) throw ApiError.notFound("Class not found on this Id");
+
+        const teacherObj = await User.findOne({ classAssigned: classId }).session(session)
+        if (teacherObj) {
             teacherObj.classAssigned = null;
-            await teacherObj.save({session,validateBeforeSave:false});
+            await teacherObj.save({ session, validateBeforeSave: false });
         }
-    
+
         // if the class is deleted , delete all students from class(sorry students u loose ur papa!!)
-        await Student.deleteMany({classId:classId}).session(session);
-         
+        await Student.deleteMany({ classId: classId }).session(session);
+
         //delete this class from model
         await classObj.deleteOne(session);
 
         // Everything successful
         await session.commitTransaction();
-    
+
         return {
-        message: "Class deleted successfully"
+            message: "Class deleted successfully"
         };
     } catch (error) {
 
