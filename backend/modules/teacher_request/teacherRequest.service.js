@@ -1,74 +1,78 @@
-import teacherRequestModel from "./teacherRequest.model.js";
+import TeacherRequest from "./teacherRequest.model.js";
 import User from "../auth/auth.model.js"
 import ApiError from "../../common/utils/ApiError.js";
 
 
 // generate a request
-const createTeacherRequest = async (userId)=>{
+const createTeacherRequest = async (userId) => {
 
-    if(!userId) throw ApiError.badRequest("userId is required");
+    if (!userId) throw ApiError.badRequest("userId is required");
 
-   const existingUser = await User.findById(userId);
-   if(!existingUser) throw ApiError.notFound("User not exits");
+    const existingUser = await User.findById(userId);
+    if (!existingUser) throw ApiError.notFound("User not exits");
 
-   if(existingUser.role ==="teacher") throw ApiError.conflict("User is already a teacher");
+    if (existingUser.role === "teacher") throw ApiError.conflict("User is already a teacher");
 
-   const existingRequest = await teacherRequestModel.findOne({
-    userId,
-    status:"pending",
-   });
-   if(existingRequest) throw ApiError.conflict("Teacher request is already pending")
-
-    const generateRequest = await teacherRequestModel.create({
+    const existingRequest = await TeacherRequest.findOne({
         userId,
-    }); 
+        status: "pending",
+    });
+    if (existingRequest) throw ApiError.conflict("Teacher request is already pending")
+
+    const generateRequest = await TeacherRequest.create({
+        userId,
+    });
 
     return generateRequest;
 };
 
 // get all teachersRequests
-const getAllRequests = async ()=>{
+const getAllRequests = async () => {
 
     // find -> never returns null , it returns [] , so we need to check length
-    const allRequests = await teacherRequestModel.find({status:"pending"}).populate("userId","name email phone");
-    if(allRequests.length===0) throw ApiError.notFound("No pending requests");
+    const allRequests = await TeacherRequest.find({ status: "pending" }).populate("userId", "name email phone");
+    if (allRequests.length === 0) throw ApiError.notFound("No pending requests");
 
     return allRequests;
 };
 
 // get requestById
-const getRequestById = async (userId)=>{
+const getRequestById = async (requestId) => {
 
-    if(!userId) throw ApiError.badRequest("UserId is required");
+    if (!requestId) throw ApiError.badRequest("UserId is required");
 
-    const getRequestbyId = await teacherRequestModel.findOne({
-        userId:userId,
-        status:"pending",
-    }).populate("userId","name email phone")
+    const getRequestbyId = await TeacherRequest.findOne({
+        userId: requestId,
+        status: "pending",
+    }).populate("userId", "name email phone")
 
-    if(!getRequestbyId) throw ApiError.notFound("No pending request");
+    if (!getRequestbyId) throw ApiError.notFound("No pending request");
 
     return getRequestbyId;
 
 };
 
 //approves teacherRequest 
-const approveRequest = async (requestId)=>{
+const approveRequest = async (requestId) => {
 
-    if(!requestId) throw ApiError.badRequest("requestId is required");
+    if (!requestId) throw ApiError.badRequest("requestId is required");
 
-    const request = await teacherRequestModel.findById(requestId);
-    if(!request) throw ApiError.notFound("No request found")
+    const request = await TeacherRequest.findById(requestId);
+    if (!request) throw ApiError.notFound("No request found")
+
+    if (request.status !== "pending") {
+        throw ApiError.conflict("Teacher request has already been handled")
+    }
 
     const user = await User.findById(request.userId);
-    if(!user) throw ApiError.notFound("No user found");
+    if (!user) throw ApiError.notFound("No user found");
 
     user.role = "teacher";
-    await user.save();
 
-    request.status="approved";  
+    request.status = "approved";
     request.reviewedAt = new Date();
 
+    await user.save();
     await request.save();
 
     return {
@@ -76,14 +80,30 @@ const approveRequest = async (requestId)=>{
     }
 }
 
+// Get all approved and rejected teacher requests
+const getProcessedRequests = async () => {
+
+    const requests = await TeacherRequest.find({
+        status: { $in: ["approved", "rejected"] }
+    })
+        .populate("userId", "name email phone role")
+        .sort({ reviewedAt: -1 });
+
+    return requests.filter(request => request.userId !== null);
+};
+
 // reject teacherRequest
-const rejectRequest = async (requestId)=>{
-    if(!requestId) throw ApiError.badRequest("RequestId is required");
+const rejectRequest = async (requestId) => {
+    if (!requestId) throw ApiError.badRequest("RequestId is required");
 
-    const request = await teacherRequestModel.findById(requestId);
-    if(!request) throw ApiError.notFound("No request found");
+    const request = await TeacherRequest.findById(requestId);
+    if (!request) throw ApiError.notFound("No request found");
 
-    request.status="rejected";
+    if (request.status !== "pending") {
+        throw ApiError.conflict("Teacher request has already been handled");
+    }
+
+    request.status = "rejected";
     request.reviewedAt = new Date();
 
     await request.save();
@@ -98,5 +118,6 @@ export {
     getAllRequests,
     getRequestById,
     approveRequest,
-    rejectRequest
+    rejectRequest,
+    getProcessedRequests
 }
