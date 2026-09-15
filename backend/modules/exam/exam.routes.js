@@ -3,13 +3,13 @@ import validate from "../../common/middleware/validate.js"
 import validateObjectIds from "../../common/middleware/id_validator.js"
 import CreateExamDto from "./dto/createExam.dto.js"
 import UpdateExamDto from "./dto/updateExam.dto.js"
-import {authenticate, authorize} from "./auth.middleware.js"
+import { authenticate, authorize } from "../auth/auth.middleware.js"
 import { Router } from "express"
 
 const router = Router();
 
 router.post(
-    '/Exam',
+    '/',
     authenticate,
     authorize("teacher"),
     validate(CreateExamDto),
@@ -17,7 +17,7 @@ router.post(
 );
 
 router.patch(
-    '/exam/:examId',
+    '/:examId',
     authenticate,
     authorize("teacher"),
     validate(UpdateExamDto),
@@ -26,7 +26,7 @@ router.patch(
 );
 
 router.get(
-    '/exam',
+    '/',
     authenticate,
     authorize("teacher"),
     examController.getAllExams,
